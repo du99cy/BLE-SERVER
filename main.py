@@ -15,6 +15,7 @@ from ble_server.constants import BLUEZ_SERVICE_NAME,LE_ADVERTISING_MANAGER_IFACE
 
 from ble_server.advertisement.test_advertisement import TestAdvertisement
 from ble_server.application.appication import Application
+from ble_server.services.test_sevice import TestService
 
 mainloop = None
 
@@ -57,6 +58,9 @@ def main(timeout=0):
             GATT_MANAGER_IFACE)
 
     app = Application(bus)
+    #add services to app
+    app.add_service(TestService(bus,0))
+    
     service_manager.RegisterApplication(app.get_path(), {},
                                     reply_handler=register_app_cb,
                                     error_handler=register_app_error_cb)

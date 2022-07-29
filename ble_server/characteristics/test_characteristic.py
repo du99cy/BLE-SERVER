@@ -1,7 +1,7 @@
 """_summary_
 """
 
-from . import Characteristic
+from .characteristic import Characteristic
 
 class TestCharacteristic(Characteristic):
     """
