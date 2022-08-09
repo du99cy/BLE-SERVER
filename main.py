@@ -4,6 +4,8 @@
 import dbus
 import argparse
 import threading
+import dbus.mainloop.glib
+from agent import BUS_NAME, Agent
 
 try:
     from gi.repository import GObject  # python3
@@ -25,7 +27,7 @@ def main(timeout=0):
     dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
 
     bus = dbus.SystemBus()
-
+    capability = "KeyboardDisplay"
     adapter = find_adapter(bus)
     if not adapter:
         print('LEAdvertisingManager1 interface not found')
@@ -40,9 +42,19 @@ def main(timeout=0):
                                 LE_ADVERTISING_MANAGER_IFACE)
 
     test_advertisement = TestAdvertisement(bus, 0)
-
+    
+    path = "/test/agent"
+    agent = Agent(bus, path)
+    
     mainloop = GObject.MainLoop()
 
+    obj = bus.get_object(BUS_NAME, "/org/bluez")
+    manager = dbus.Interface(obj, "org.bluez.AgentManager1")
+    manager.RegisterAgent(path, capability)
+
+    manager.RequestDefaultAgent(path)
+    print("Agent registered")
+    
     ad_manager.RegisterAdvertisement(test_advertisement.get_path(), {},
                                      reply_handler=register_ad_cb,
                                      error_handler=register_ad_error_cb)
@@ -78,5 +90,7 @@ if __name__ == "__main__":
                         "for this many seconds then stop, 0=run forever " +
                         "(default: 0)")
     args = parser.parse_args()
+    
+    
 
     main(args.timeout)

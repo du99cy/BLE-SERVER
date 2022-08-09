@@ -5,6 +5,7 @@
 
 
 import dbus.exceptions
+import dbus.service
 
 
 class InvalidArgsException(dbus.exceptions.DBusException):
