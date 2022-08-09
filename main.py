@@ -45,8 +45,6 @@ def main(timeout=0):
     
     path = "/test/agent"
     agent = Agent(bus, path)
-    
-    mainloop = GObject.MainLoop()
 
     obj = bus.get_object(BUS_NAME, "/org/bluez")
     manager = dbus.Interface(obj, "org.bluez.AgentManager1")
@@ -54,6 +52,9 @@ def main(timeout=0):
 
     manager.RequestDefaultAgent(path)
     print("Agent registered")
+    
+    mainloop = GObject.MainLoop()
+
     
     ad_manager.RegisterAdvertisement(test_advertisement.get_path(), {},
                                      reply_handler=register_ad_cb,
