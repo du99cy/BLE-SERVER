@@ -15,7 +15,8 @@ from ble_server.advertisement.test_advertisement import TestAdvertisement
 from ble_server.application.appication import Application
 from ble_server.services.test_sevice import TestService
 from ble_server import agent
-
+from ble_server.characteristics.test_signal_characteristic import TestSendSignalCharacteristic
+from ble_server.characteristics.test_characteristic import TestCharacteristic
 
 try:
     from gi.repository import GObject  # python3
@@ -54,7 +55,7 @@ def main(timeout=0):
     obj = bus.get_object(BLUEZ_SERVICE_NAME, "/org/bluez")
     manager = dbus.Interface(obj, "org.bluez.AgentManager1")
     manager.RegisterAgent(
-        agent_path, agent.constants.AgentCapability.NO_INPUT_NO_OUTPUT)
+        agent_path, agent.constants.AgentCapability.NO_INPUT_NO_OUTPUT.value)
 
     manager.RequestDefaultAgent(agent_path)
     print("Agent registered")
@@ -76,8 +77,25 @@ def main(timeout=0):
         GATT_MANAGER_IFACE)
 
     app = Application(bus)
+
+    # create instance of service
+    test_service = TestService(bus, 0)
+
+    # create instances characteristics
+    test_characteristic = TestCharacteristic(bus, 0, test_service)
+    test_send_dignal_characteristic = TestSendSignalCharacteristic(
+        bus, 1, test_service)
+
+    # add test_send_dignal_characteristic to test_characteristic to test send
+    # signal
+    test_characteristic.add_characteristic(test_send_dignal_characteristic)
+
+    # add characteristics to service
+    test_service.add_characteristic(test_characteristic)
+    test_service.add_characteristic(test_send_dignal_characteristic)
+
     # add services to app
-    app.add_service(TestService(bus, 0))
+    app.add_service(test_service)
 
     service_manager.RegisterApplication(app.get_path(), {},
                                         reply_handler=register_app_cb,
