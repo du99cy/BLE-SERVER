@@ -5,6 +5,9 @@ import dbus
 from ..constants import *
 from ..exceptions import *
 
+from data_untils import json_encode, dbus_encode
+from ble_server.constants import GATT_CHRC_IFACE
+
 
 class Characteristic(dbus.service.Object):
     """
@@ -82,3 +85,15 @@ class Characteristic(dbus.service.Object):
                          signature='sa{sv}as')
     def PropertiesChanged(self, interface, changed, invalidated):
         pass
+
+    def NotifyValue(self, message: str):
+        """
+        Send notification message by change the notification value.
+
+        Args:
+            message: str, Any. Receive string message or jsonable object.
+        """
+        if not isinstance(message, str):
+            message = json_encode(message)
+        message = dbus_encode(message)
+        self.PropertiesChanged(GATT_CHRC_IFACE, {'Value': message}, [])

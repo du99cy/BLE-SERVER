@@ -1,6 +1,7 @@
 """_summary_
 """
 
+from ..characteristics.test_signal_characteristic import TestSendSignalCharacteristic
 from .service import Service
 from ..characteristics.test_characteristic import TestCharacteristic
 
@@ -15,6 +16,5 @@ class TestService(Service):
 
     def __init__(self, bus, index):
         Service.__init__(self, bus, index, self.TEST_SVC_UUID, True)
-        self.add_characteristic(TestCharacteristic(bus, 0, self))
         # self.add_characteristic(TestEncryptCharacteristic(bus, 1, self))
         # self.add_characteristic(TestSecureCharacteristic(bus, 2, self))

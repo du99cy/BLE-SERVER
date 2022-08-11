@@ -1,7 +1,9 @@
 """_summary_
 """
 
+from optparse import Option
 from .characteristic import Characteristic
+from typing import Optional
 
 
 class TestCharacteristic(Characteristic):
@@ -11,6 +13,8 @@ class TestCharacteristic(Characteristic):
 
     """
     TEST_CHRC_UUID = '12345678-1234-5678-1234-56789abcdef1'
+    # create a characteristic object to send a signal
+    characteristic: Optional[Characteristic] = None
 
     def __init__(self, bus, index, service):
         Characteristic.__init__(
@@ -24,9 +28,12 @@ class TestCharacteristic(Characteristic):
         #         CharacteristicUserDescriptionDescriptor(bus, 1, self))
 
     def ReadValue(self, options):
-        print('TestCharacteristic Read: ' + repr(self.value))
+        self.characteristic.NotifyValue("hello drake nguyen")
         return self.value
 
     def WriteValue(self, value, options):
         print('TestCharacteristic Write: ' + repr(value))
         self.value = value
+
+    def add_characteristic(self, characteristic: Characteristic):
+        self.characteristic = characteristic
