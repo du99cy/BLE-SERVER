@@ -3,7 +3,8 @@
 import dbus
 
 from ..constants import *
-from ..exceptions import * 
+from ..exceptions import *
+
 
 class Advertisement(dbus.service.Object):
     PATH_BASE = '/org/bluez/example/advertisement'

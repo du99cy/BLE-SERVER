@@ -3,6 +3,7 @@
 
 from .characteristic import Characteristic
 
+
 class TestCharacteristic(Characteristic):
     """
     Dummy test characteristic. Allows writing arbitrary bytes to its value, and
@@ -13,10 +14,10 @@ class TestCharacteristic(Characteristic):
 
     def __init__(self, bus, index, service):
         Characteristic.__init__(
-                self, bus, index,
-                self.TEST_CHRC_UUID,
-                ['read', 'write', 'writable-auxiliaries'],
-                service)
+            self, bus, index,
+            self.TEST_CHRC_UUID,
+            ['read', 'write', 'writable-auxiliaries'],
+            service)
         self.value = []
         # self.add_descriptor(TestDescriptor(bus, 0, self))
         # self.add_descriptor(
