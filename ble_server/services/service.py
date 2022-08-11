@@ -4,6 +4,7 @@ import dbus
 from ..constants import *
 from ..exceptions import *
 
+
 class Service(dbus.service.Object):
     """
     org.bluez.GattService1 interface implementation
@@ -20,13 +21,13 @@ class Service(dbus.service.Object):
 
     def get_properties(self):
         return {
-                GATT_SERVICE_IFACE: {
-                        'UUID': self.uuid,
-                        'Primary': self.primary,
-                        'Characteristics': dbus.Array(
-                                self.get_characteristic_paths(),
-                                signature='o')
-                }
+            GATT_SERVICE_IFACE: {
+                'UUID': self.uuid,
+                'Primary': self.primary,
+                'Characteristics': dbus.Array(
+                    self.get_characteristic_paths(),
+                    signature='o')
+            }
         }
 
     def get_path(self):

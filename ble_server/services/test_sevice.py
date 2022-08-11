@@ -4,6 +4,7 @@
 from .service import Service
 from ..characteristics.test_characteristic import TestCharacteristic
 
+
 class TestService(Service):
     """
     Dummy test service that provides characteristics and descriptors that

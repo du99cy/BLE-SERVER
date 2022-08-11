@@ -1,20 +1,12 @@
-#!/usr/bin/python
-# SPDX-License-Identifier: LGPL-2.1-or-later
+"""Agent Class"""
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-import sys
 import dbus
 import dbus.service
 import dbus.mainloop.glib
-try:
-  from gi.repository import GObject
-except ImportError:
-  import gobject as GObject
 
-BUS_NAME = 'org.bluez'
-AGENT_INTERFACE = 'org.bluez.Agent1'
-AGENT_PATH = "/test/agent"
+from ..constants import AGENT_INTERFACE\
 
 bus = None
 device_obj = None
@@ -24,7 +16,7 @@ dev_path = None
 def ask(prompt):
     try:
         return raw_input(prompt)
-    except:
+    except BaseException:
         return input(prompt)
 
 
@@ -100,7 +92,8 @@ class Agent(dbus.service.Object):
         if (confirm == "yes"):
             set_trusted(device)
             return
-        raise Rejected("Passkey doesn't match")
+        else:
+            raise Rejected("Passkey doesn't match")
 
     @dbus.service.method(AGENT_INTERFACE,
                          in_signature="o", out_signature="")
@@ -185,5 +178,5 @@ def pair_error(error):
 
 #     mainloop.run()
 
-    #adapter.UnregisterAgent(path)
-    #print("Agent unregistered")
+    # adapter.UnregisterAgent(path)
+    # print("Agent unregistered")

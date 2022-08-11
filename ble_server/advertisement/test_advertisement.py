@@ -1,5 +1,6 @@
 from .advertisement import Advertisement
 
+
 class TestAdvertisement(Advertisement):
 
     def __init__(self, bus, index):
