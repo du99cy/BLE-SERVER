@@ -22,13 +22,15 @@ class TestCharacteristic(Characteristic):
             self.TEST_CHRC_UUID,
             ['read', 'write', 'writable-auxiliaries'],
             service)
-        self.value = []
+        self.value = 0
         # self.add_descriptor(TestDescriptor(bus, 0, self))
         # self.add_descriptor(
         #         CharacteristicUserDescriptionDescriptor(bus, 1, self))
 
     def ReadValue(self, options):
-        self.characteristic.NotifyValue("hello drake nguyen")
+        self.value += 1
+        self.characteristic.NotifyValue(
+            "hello drake nguyen " + str(self.value))
         return self.value
 
     def WriteValue(self, value, options):

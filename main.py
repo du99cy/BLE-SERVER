@@ -55,7 +55,7 @@ def main(timeout=0):
     obj = bus.get_object(BLUEZ_SERVICE_NAME, "/org/bluez")
     manager = dbus.Interface(obj, "org.bluez.AgentManager1")
     manager.RegisterAgent(
-        agent_path, agent.constants.AgentCapability.NO_INPUT_NO_OUTPUT)
+        agent_path, agent.constants.AgentCapability.NO_INPUT_NO_OUTPUT.value)
 
     manager.RequestDefaultAgent(agent_path)
     print("Agent registered")
@@ -84,7 +84,7 @@ def main(timeout=0):
     # create instances characteristics
     test_characteristic = TestCharacteristic(bus, 0, test_service)
     test_send_dignal_characteristic = TestSendSignalCharacteristic(
-        bus, 0, test_service)
+        bus, 1, test_service)
 
     # add test_send_dignal_characteristic to test_characteristic to test send
     # signal

@@ -1,7 +1,6 @@
 """_summary_
 """
 
-from ..characteristics.test_signal_characteristic import TestSendSignalCharacteristic
 from .service import Service
 from ..characteristics.test_characteristic import TestCharacteristic
 
