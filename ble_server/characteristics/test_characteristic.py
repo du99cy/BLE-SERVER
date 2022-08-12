@@ -1,11 +1,13 @@
 """_summary_
 """
+import logging
 
 from optparse import Option
 from .characteristic import Characteristic
 from typing import Optional
+from ble_server.dbus_utils import parse_dbus_to_json, parse_json_to_dbus
 
-
+logger = logging(__name__)
 class TestCharacteristic(Characteristic):
     """
     Dummy test characteristic. Allows writing arbitrary bytes to its value, and
@@ -29,13 +31,14 @@ class TestCharacteristic(Characteristic):
 
     def ReadValue(self, options):
         self.value += 1
-        self.characteristic.NotifyValue(
-            "hello drake nguyen " + str(self.value))
-        return self.value
+        value_to_read = "hello drake nguyen " + str(self.value)
+        self.characteristic.NotifyValue(value_to_read)
+        dbus_value = parse_json_to_dbus(value_to_read)
+        return dbus_value
 
     def WriteValue(self, value, options):
-        print('TestCharacteristic Write: ' + repr(value))
-        self.value = value
+        value_json = parse_dbus_to_json(value)
+        logger.debug(value_json)
 
     def add_characteristic(self, characteristic: Characteristic):
         self.characteristic = characteristic

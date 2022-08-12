@@ -6,7 +6,7 @@ from typing import Any
 
 # convert from json to dbus data
 # for ReadValue
-def parse_str_to_dbus(data: str | Any) -> bytearray:
+def parse_json_to_dbus(data: str | Any) -> bytearray:
     dbus_data = bytearray(data, encoding="utf8")
     return dbus_data
 
