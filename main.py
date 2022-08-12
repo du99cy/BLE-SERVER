@@ -1,6 +1,7 @@
 """_summary_
 """
 
+from ast import parse
 import dbus
 import argparse
 import threading
@@ -9,7 +10,7 @@ import dbus.mainloop.glib
 from ble_server.utils import find_adapter,\
     register_ad_cb, register_ad_error_cb, shutdown,\
     register_app_cb, register_app_error_cb
-from ble_server.constants import BLUEZ_SERVICE_NAME,\
+from ble_server.constants import BLUEZ_SERVICE_NAME, DBUS_OM_IFACE, DBUS_PROP_IFACE, DEVICE_IFACE,\
     LE_ADVERTISING_MANAGER_IFACE, GATT_MANAGER_IFACE
 from ble_server.advertisement.test_advertisement import TestAdvertisement
 from ble_server.application.appication import Application
@@ -17,6 +18,8 @@ from ble_server.services.test_sevice import TestService
 from ble_server import agent
 from ble_server.characteristics.test_signal_characteristic import TestSendSignalCharacteristic
 from ble_server.characteristics.test_characteristic import TestCharacteristic
+
+from .helper import dbus_connection_callback, dbus_disconnection_callback
 
 try:
     from gi.repository import GObject  # python3
@@ -32,6 +35,18 @@ def main(timeout=0):
     dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
 
     bus = dbus.SystemBus()
+
+    # add some signal when connect and disconnect to a divice
+    bus.add_signal_receiver(
+        handler_function=dbus_connection_callback,
+        dbus_interface=DBUS_OM_IFACE,
+        signal_name='InterfacesAdded',
+    )
+    bus.add_signal_receiver(
+        handler_function=dbus_disconnection_callback,
+        dbus_interface=DBUS_PROP_IFACE,
+        arg0=DEVICE_IFACE,
+    )
 
     adapter = find_adapter(bus)
     if not adapter:
@@ -101,6 +116,8 @@ def main(timeout=0):
                                         reply_handler=register_app_cb,
                                         error_handler=register_app_error_cb)
 
+    #
+
     mainloop.run()  # blocks until mainloop.quit() is called
 
     ad_manager.UnregisterAdvertisement(test_advertisement)
@@ -114,6 +131,7 @@ if __name__ == "__main__":
     parser.add_argument('--timeout', default=0, type=int, help="advertise " +
                         "for this many seconds then stop, 0=run forever " +
                         "(default: 0)")
+    parser.add_argument("-log", default="debug")
     args = parser.parse_args()
 
     main(args.timeout)

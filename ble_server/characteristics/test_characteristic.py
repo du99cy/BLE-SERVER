@@ -7,7 +7,9 @@ from .characteristic import Characteristic
 from typing import Optional
 from ble_server.dbus_utils import parse_dbus_to_json, parse_json_to_dbus
 
-logger = logging(__name__)
+logger = logging.getLogger(__name__)
+
+
 class TestCharacteristic(Characteristic):
     """
     Dummy test characteristic. Allows writing arbitrary bytes to its value, and
