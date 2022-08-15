@@ -7,10 +7,12 @@ import argparse
 import threading
 import dbus.mainloop.glib
 
+from ble_server.battery.battery_utils import register_provider_cb, register_provider_error_cb
+from ble_server.battery.battery_provider import Battery
 from ble_server.utils import find_adapter,\
     register_ad_cb, register_ad_error_cb, shutdown,\
     register_app_cb, register_app_error_cb
-from ble_server.constants import BLUEZ_SERVICE_NAME, DBUS_OM_IFACE, DBUS_PROP_IFACE, DEVICE_IFACE,\
+from ble_server.constants import BATTERY_PATH1, BATTERY_PROVIDER_MANAGER_IFACE, BATTERY_PROVIDER_PATH, BLUEZ_SERVICE_NAME, DBUS_OM_IFACE, DBUS_PROP_IFACE, DEVICE_IFACE,\
     LE_ADVERTISING_MANAGER_IFACE, GATT_MANAGER_IFACE
 from ble_server.advertisement.test_advertisement import TestAdvertisement
 from ble_server.application.appication import Application
@@ -19,7 +21,7 @@ from ble_server import agent
 from ble_server.characteristics.test_signal_characteristic import TestSendSignalCharacteristic
 from ble_server.characteristics.test_characteristic import TestCharacteristic
 
-from .helper import dbus_connection_callback, dbus_disconnection_callback
+from helper import dbus_connection_callback, dbus_disconnection_callback
 
 try:
     from gi.repository import GObject  # python3
@@ -116,7 +118,17 @@ def main(timeout=0):
                                         reply_handler=register_app_cb,
                                         error_handler=register_app_error_cb)
 
-    #
+    # battery service
+    battery_provider_manager = dbus.Interface(
+        bus.get_object(BLUEZ_SERVICE_NAME, adapter),
+        BATTERY_PROVIDER_MANAGER_IFACE)
+
+    battery1 = Battery(bus, BATTERY_PATH1, 87, 'Protocol 1')
+    app.add_battery(battery1)
+    battery_provider_manager.RegisterBatteryProvider(
+        BATTERY_PROVIDER_PATH,
+        reply_handler=register_provider_cb,
+        error_handler=register_provider_error_cb)
 
     mainloop.run()  # blocks until mainloop.quit() is called
 
